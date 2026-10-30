@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equilibrios Románticos — Una Perspectiva Matemática</title>
+    <title>Equilibrios Románticos — Teoría Espectral del Emparejamiento</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#F9F8F6',
+                        ink: '#161616',
+                        terracotta: '#C25438',
+                        gold: '#D4A373',
+                        warmgray: '#EBE7DF',
+                    },
+                    fontFamily: {
+                        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+                        gothic: ['"UnifrakturMaguntia"', 'serif'],
+                        display: ['"Syne"', 'sans-serif'],
+                        mono: ['"Space Mono"', '"JetBrains Mono"', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- KaTeX CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&family=UnifrakturMaguntia&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- KaTeX CSS & JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
-    <!-- KaTeX JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
-    <!-- KaTeX Auto-render -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"
         onload="renderMathInElement(document.body, {
             delimiters: [
@@ -26,210 +46,369 @@
         });"></script>
     <style>
         body {
+            background-color: #F9F8F6;
+            color: #161616;
             font-family: 'Inter', sans-serif;
-            background-color: #f7f5ef;
-            color: #222225;
         }
-        .font-serif-custom {
-            font-family: 'Lora', serif;
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F9F8F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C25438;
+        }
+        .option-card:hover {
+            transform: translateX(4px);
         }
     </style>
 </head>
-<body class="min-h-screen antialiased relative overflow-x-hidden selection:bg-amber-200">
+<body class="antialiased selection:bg-terracotta selection:text-paper relative overflow-x-hidden">
 
-    <!-- Fondo animado sutil (Canvas) -->
-    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+    <!-- Film Grain Overlay -->
+    <div class="fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
 
-    <main class="relative z-10 max-w-3xl mx-auto px-6 py-20 space-y-32">
+    <!-- Background Live Canvas -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-55"></canvas>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-6 sm:px-12 py-16 space-y-24">
         
-        <!-- Cabecera Editorial -->
-        <header class="text-center space-y-6 border-b border-stone-300 pb-16">
-            <span class="text-xs uppercase tracking-widest text-amber-800 font-semibold bg-amber-100/60 px-3 py-1 rounded-full">
-                Divulgación Matemática &bull; University of Chicago
-            </span>
-            <h1 class="text-5xl sm:text-7xl font-serif-custom font-bold tracking-tight text-stone-900 leading-none">
-                Equilibrios Románticos
-            </h1>
-            <p class="text-stone-600 max-w-xl mx-auto text-lg font-serif-custom italic">
-                Una aproximación basada en teoría de medidas, control estocástico y geometría riemanniana[cite: 1].
-            </p>
+        <!-- Header Editorial Asimétrico -->
+        <header class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-ink pb-16 items-end">
+            <div class="md:col-span-8 space-y-4">
+                <span class="font-gothic text-3xl text-terracotta block">Liber Primus</span>
+                <h1 class="font-display text-5xl sm:text-7xl uppercase tracking-tighter leading-none text-ink">
+                    Equilibrios<br>Románticos
+                </h1>
+            </div>
+            <div class="md:col-span-4 space-y-3 font-mono text-xs text-stone-600 border-l border-warmgray pl-6">
+                <p class="font-bold uppercase tracking-widest text-terracotta">University of Chicago</p>
+                <p>Department of Applied Mathematics</p>
+                <p class="italic font-serif text-stone-800 text-sm">Modelado formal de dinámicas de pareja mediante geometría diferencial y teoría espectral.</p>
+            </div>
         </header>
 
-        <!-- SECCIÓN 1: EL OPERADOR RIZZ -->
-        <section class="space-y-12">
-            <div class="space-y-4">
-                <span class="text-xs uppercase tracking-widest text-amber-800 font-bold">Capítulo I</span>
-                <h2 class="text-4xl font-serif-custom font-bold text-stone-900">El Operador Rizz ($\mathcal{R}$)</h2>
-                
-                <div class="border-l-2 border-amber-700 pl-4 py-1 text-stone-700 text-sm leading-relaxed font-serif-custom italic">
-                    <strong>La metáfora de la estación de radio:</strong> 
-                    Imagina que cada persona emite una frecuencia de onda con sus gustos y pasiones[cite: 1]. Tu Rizz es la potencia con la que sintonizas esa frecuencia sin estática[cite: 2].
-                </div>
-
-                <p class="text-stone-600 text-sm leading-relaxed pt-2">
-                    Formalmente, el núcleo $K(x,y)$ integra la tolerancia ante desacuerdos en el colector riemanniano $\mathcal{M}$ y el carisma $\beta$[cite: 1, 2]:
-                </p>
-                <div class="py-4 text-center font-mono text-sm text-stone-900 overflow-x-auto">
-                    $$K(x,y) = \exp\left(-\frac{d_g(x,y)^2}{2\tau^2}\right)(1 + \beta \Phi(x)\Phi(y))$$
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start pt-6">
-                <!-- Controles -->
-                <div class="space-y-8">
-                    <div>
-                        <label class="block text-sm font-medium text-stone-800 mb-2">
-                            Radio de Tolerancia ($\tau$): <span id="tau-val" class="text-amber-800 font-bold">1.5</span>
-                        </label>
-                        <input type="range" id="tau" min="0.2" max="5.0" step="0.1" value="1.5" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                        <span class="text-xs text-stone-500 mt-1 block">Flexibilidad ante diferencias de opinión.</span>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-stone-800 mb-2">
-                            Coeficiente de Carisma ($\beta$): <span id="beta-val" class="text-amber-800 font-bold">3.0</span>
-                        </label>
-                        <input type="range" id="beta" min="0" max="10" step="0.5" value="3.0" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                        <span class="text-xs text-stone-500 mt-1 block"> Chispa conversacional natural[cite: 2].</span>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-stone-800 mb-2">
-                            Vibra Promedio ($\Phi$): <span id="phi-val" class="text-amber-800 font-bold">2.0</span>
-                        </label>
-                        <input type="range" id="phi" min="0.1" max="5.0" step="0.1" value="2.0" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                        <span class="text-xs text-stone-500 mt-1 block">Intensidad de alineamiento en pasiones[cite: 2].</span>
-                    </div>
-                </div>
-
-                <!-- Resultados -->
-                <div class="space-y-6 pt-2">
-                    <div>
-                        <div class="text-xs text-stone-500 uppercase tracking-wider">Autovalor Principal ($\lambda_1$ — Principal Rizz)[cite: 2]</div>
-                        <div id="lambda1-res" class="text-5xl font-serif-custom font-bold text-stone-900 mt-1">--</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-stone-500 uppercase tracking-wider">Brecha Espectral ($\Delta$)[cite: 2]</div>
-                        <div id="delta-res" class="text-2xl font-serif-custom font-bold text-stone-700 mt-1">--</div>
-                    </div>
-                    <div id="rizz-advice" class="text-xs pt-4 text-stone-600 border-t border-stone-200 leading-relaxed">
-                        Calculando estado de encanto...
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="w-full h-px bg-stone-300"></div>
-
-        <!-- SECCIÓN 2: DINÁMICA ESTOCÁSTICA Y HJB -->
-        <section class="space-y-12">
-            <div class="space-y-4">
-                <span class="text-xs uppercase tracking-widest text-amber-800 font-bold">Capítulo II</span>
-                <h2 class="text-4xl font-serif-custom font-bold text-stone-900">Dinámica Estocástica del Interés y Parada Óptima</h2>
-                
-                <div class="border-l-2 border-amber-700 pl-4 py-1 text-stone-700 text-sm leading-relaxed font-serif-custom italic">
-                    <strong>La metáfora del yoyo y el "visto":</strong> 
-                    El interés sube y baja según tu esfuerzo[cite: 3]. Pero cuidado con la medida de Poisson de "dejar en visto" $\tilde{N}$, un salto imprevisto hacia abajo en el chat[cite: 3].
-                </div>
-
-                <p class="text-stone-600 text-sm leading-relaxed pt-2">
-                    La ecuación diferencial estocástica modela el interés $I_t$, mientras la desigualdad variacional de HJB define el momento exacto para actuar[cite: 3, 4].
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
-                <div class="space-y-2">
-                    <label class="block text-xs font-medium text-stone-800">Esfuerzo de Control ($u$ - Gym/Textos)[cite: 3]</label>
-                    <input type="range" id="control-u" min="0.1" max="5.0" step="0.1" value="2.5" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                    <div class="text-xs text-amber-800 text-right font-bold" id="val-u">2.5</div>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-xs font-medium text-stone-800">Tasa de Descuento ($r$ - Competencia)[cite: 3]</label>
-                    <input type="range" id="discount-r" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                    <div class="text-xs text-amber-800 text-right font-bold" id="val-r">0.10</div>
-                </div>
+        <!-- FASE 1: CUESTIONARIO EXPRÉS -->
+        <section id="phase-quiz" class="space-y-16">
+            <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 border-b border-warmgray pb-6">
                 <div>
-                    <button id="run-sim" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 font-medium text-sm transition tracking-wide">
-                        Simular Interés ($I_t$)
+                    <span class="font-gothic text-2xl text-terracotta block">I. Calibratio Initialis</span>
+                    <h2 class="font-display text-3xl sm:text-4xl uppercase text-ink">Cuestionario Diagnóstico Rápido</h2>
+                    <p class="font-serif italic text-stone-600 text-sm mt-1">10 preguntas tácticas para calcular tu informe espectral sin rodeos.</p>
+                </div>
+                <div class="font-mono text-xs text-stone-500" id="wizard-counter">INDEX: 01 / 10</div>
+            </div>
+
+            <div id="wizard-container" class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start max-w-4xl mx-auto">
+                <div id="wizard-step-content" class="md:col-span-12 space-y-8"></div>
+
+                <div class="md:col-span-12 flex items-center justify-between pt-6 border-t border-warmgray">
+                    <button type="button" id="wizard-prev" class="px-4 py-2 font-mono text-xs uppercase tracking-widest text-stone-500 hover:text-terracotta disabled:opacity-20 transition bg-transparent" disabled>
+                        [ PREV ]
+                    </button>
+                    <button type="button" id="wizard-next" class="px-8 py-3 bg-transparent border border-ink text-ink font-mono text-xs uppercase tracking-widest hover:bg-terracotta hover:border-terracotta hover:text-paper transition shadow-sm">
+                        [ NEXT ]
                     </button>
                 </div>
             </div>
-
-            <!-- Gráfica Chart.js en tono editorial limpio -->
-            <div class="pt-4 relative h-72">
-                <canvas id="interestChart"></canvas>
-            </div>
         </section>
 
-        <div class="w-full h-px bg-stone-300"></div>
+        <!-- FASE INTERMEDIA: SELECTOR ESTRUCTURADO DEL IDEAL O CRUSH -->
+        <section id="phase-ideal" class="hidden space-y-12 max-w-4xl mx-auto border-2 border-ink bg-paper p-8 sm:p-12 shadow-xl">
+            <div class="space-y-2 border-b border-warmgray pb-6">
+                <span class="font-gothic text-2xl text-terracotta block">II. Analytica Personae</span>
+                <h2 class="font-display text-3xl uppercase text-ink">Selector Estructurado del Ideal / Crush</h2>
+                <p class="font-serif italic text-stone-700 text-sm">
+                    Selecciona una opción en cada una de las 5 categorías para definir el perfil objetivo sin errores de tipeo.
+                </p>
+            </div>
 
-        <!-- SECCIÓN 3: LA LEY DEL 1/e -->
-        <section class="space-y-12">
-            <div class="space-y-4">
-                <span class="text-xs uppercase tracking-widest text-amber-800 font-bold">Capítulo III</span>
-                <h2 class="text-4xl font-serif-custom font-bold text-stone-900">El Problema de la Secretaria y la Ley del $1/e$</h2>
-                
-                <div class="border-l-2 border-amber-700 pl-4 py-1 text-stone-700 text-sm leading-relaxed font-serif-custom italic">
-                    <strong>La metáfora de la vitrina de helados:</strong> 
-                    Si vas a probar 30 sabores, rechazar al primer tercio (los primeros 11) no es perder el tiempo, es conocer el estándar del mercado para elegir con precisión después[cite: 6].
+            <div id="ideal-categories-container" class="space-y-10">
+                <!-- Inyectado dinámicamente -->
+            </div>
+
+            <button type="button" id="evaluate-ideal-btn" class="w-full py-4 bg-ink text-paper font-mono text-xs uppercase tracking-widest hover:bg-terracotta transition shadow-sm">
+                [ EJECUTAR ACOPLAMIENTO ESPECTRAL Y GENERAR INFORME ]
+            </button>
+        </section>
+
+        <!-- FASE 3: RESULTADOS INMUTABLES -->
+        <div id="phase-dashboard" class="hidden space-y-28">
+
+            <!-- ENCABEZADO PRINCIPAL DE TODO EL INFORME: PROYECCIÓN FINAL DE MATCH (ARRIBA DE CAPUT I) -->
+            <div id="match-probability-hero" class="p-8 sm:p-12 border-4 border-ink bg-terracotta text-paper text-center space-y-4 shadow-xl">
+                <span class="font-mono text-xs uppercase tracking-widest text-paper/80 font-bold block">[ PROYECCIÓN FINAL DE MATCH ]</span>
+                <h3 id="hero-prob-val" class="font-display text-6xl sm:text-8xl tracking-tight text-paper font-bold leading-none">
+                    --%
+                </h3>
+                <p id="hero-prob-desc" class="font-serif text-xl sm:text-2xl text-paper/90 italic max-w-2xl mx-auto">
+                    Calculando tu probabilidad matemática global de consolidar pareja...
+                </p>
+                <div id="ideal-feedback-box" class="pt-4 border-t border-paper/30 font-mono text-xs text-paper/90 uppercase tracking-widest">
+                    <!-- Análisis del perfil seleccionado -->
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center pt-4">
-                <div class="space-y-4">
-                    <label class="block text-sm font-medium text-stone-800 mb-2">
-                        Número total de prospectos estimados ($n$): <span id="n-val" class="text-amber-800 font-bold">30</span>
-                    </label>
-                    <input type="range" id="prospects-n" min="5" max="100" step="1" value="30" class="w-full accent-amber-800 cursor-pointer bg-stone-200 h-1 rounded">
-                    <span class="text-xs text-stone-500 mt-1 block">Horizonte de candidatos evaluados en tu ciclo anual[cite: 6].</span>
+            <!-- CAPUT I: OPERADOR RIZZ -->
+            <section class="space-y-12">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-warmgray pb-8 items-start">
+                    <div class="md:col-span-4">
+                        <span class="font-gothic text-2xl text-terracotta block">Caput I</span>
+                        <h2 class="font-display text-4xl uppercase text-ink">Operador Rizz ($\mathcal{R}$)</h2>
+                    </div>
+                    <div class="md:col-span-8 space-y-4">
+                        <p class="font-serif italic text-xl text-stone-800 leading-relaxed">
+                            Imagina que cada mente emite una frecuencia de onda en el colector riemanniano $\mathcal{M}$. Tu Rizz representa la potencia espectral para sintonizar esa frecuencia sin interferencia.
+                        </p>
+                        <div class="font-mono text-xs text-ink bg-warmgray/40 p-4 border-l-2 border-terracotta overflow-x-auto text-xl">
+                            $$K(x,y) = \exp\left(-\frac{d_g(x,y)^2}{2\tau^2}\right)(1 + \beta \Phi(x)\Phi(y))$$
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-4 text-center md:text-left">
-                    <div class="text-xs text-stone-500 uppercase tracking-widest font-semibold">Prospectos a descartar (Fase de Datos)</div>
-                    <div id="cutoff-res" class="text-6xl font-serif-custom font-extrabold text-stone-900">11</div>
-                    <p class="text-xs text-stone-600 leading-relaxed font-serif-custom" id="cutoff-desc">
-                        Rechaza puramente a los primeros <strong>11</strong> candidatos y comprométete con el primero que supere al mejor de ese grupo[cite: 6].
+                <!-- MEME CAPUT I: RIZZ (Imagen estable en formato de tarjeta técnica) -->
+                <div class="meme-box max-w-md mx-auto border-2 border-ink bg-paper p-4 shadow-md space-y-3 text-center">
+                    <div class="font-mono text-[10px] text-stone-500 uppercase font-bold">[ ARCHIVO VISUAL // RIZZ_QUANTUM.PNG ]</div>
+                    <div class="bg-ink text-paper p-6 font-display text-3xl tracking-wider uppercase">
+                        SUERTE ? NO, <br><span class="text-tergracchetta text-terracotta">CÁLCULO ESPECTRAL</span>
+                    </div>
+                    <p class="font-serif text-xs text-stone-600 italic">"Cuando aplicas el operador Rizz y el espacio-tiempo de la conversación se curva a tu favor."</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+                    <!-- RECUADRO DE EXPLICACIÓN DETALLADA DE PRIMERA SECCIÓN -->
+                    <div class="md:col-span-6 border-2 border-ink bg-paper p-6 space-y-4 font-mono text-xs">
+                        <span class="text-terracotta font-bold uppercase tracking-widest block border-b border-warmgray pb-2">[ EXPLICACIÓN DE RESULTADOS ] SECCIÓN I</span>
+                        <p class="font-serif text-sm text-stone-700 italic leading-relaxed">
+                            Esta sección mide la potencia de tu campo de atracción. Tus respuestas calibran tres variables esenciales:
+                        </p>
+                        <ul class="space-y-2 text-stone-800 font-serif text-xs leading-normal">
+                            <li>• <strong class="font-mono text-ink">Radio de Tolerancia ($\tau = $ <span id="res-tau" class="text-terracotta">--</span>):</strong> Es tu capacidad para no espantarte o molestarte con opiniones distintas. Un valor alto refleja mente abierta.</li>
+                            <li>• <strong class="font-mono text-ink">Carisma ($\beta = $ <span id="res-beta" class="text-terracotta">--</span>):</strong> Mide tu chispa conversacional y la fluidez para mantener activa una plática.</li>
+                            <li>• <strong class="font-mono text-ink">Vibra Promedio ($\Phi = $ <span id="res-phi" class="text-terracotta">--</span>):</strong> Es la intensidad con la que transmites tus pasiones y proyectos.</li>
+                        </ul>
+                    </div>
+
+                    <!-- RESULTADO DESTACADO EN BLOQUE ROBUSTO -->
+                    <div class="md:col-span-6 border-2 border-terracotta bg-terracotta/5 p-8 space-y-6">
+                        <div class="font-mono text-xs uppercase tracking-widest text-terracotta font-bold">[ RESULTADO CLAVE ] TELEMETRÍA ESPECTRAL</div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-paper p-4 border border-terracotta/30">
+                                <div class="font-mono text-xs text-stone-500 uppercase">Autovalor ($\Lambda_1$)</div>
+                                <div id="lambda1-res" class="font-display text-5xl text-terracotta mt-1 font-bold">--</div>
+                                <p class="font-serif text-[10px] text-stone-500 italic mt-1 leading-tight">Fuerza de atracción espectral general.</p>
+                            </div>
+
+                            <div class="bg-paper p-4 border border-terracotta/30">
+                                <div class="font-mono text-xs text-stone-500 uppercase">Brecha ($\Delta$)</div>
+                                <div id="delta-res" class="font-display text-3xl text-ink mt-2 font-bold">--</div>
+                                <p class="font-serif text-[10px] text-stone-500 italic mt-1 leading-tight">Estabilidad ante imprevistos.</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-terracotta/20">
+                            <div id="diagnostic-badge" class="font-mono text-xs uppercase tracking-widest text-terracotta font-bold mb-2">
+                                [CALCULANDO_ESTADO]
+                            </div>
+                            <div id="rizz-advice" class="font-serif text-base italic text-stone-800 leading-relaxed font-semibold">
+                                Procesando autovectores en el espacio de Hilbert...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CAPUT II: DINÁMICA ESTOCÁSTICA & HJB -->
+            <section class="space-y-12">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-warmgray pb-8 items-start">
+                    <div class="md:col-span-4">
+                        <span class="font-gothic text-2xl text-terracotta block">Caput II</span>
+                        <h2 class="font-display text-4xl uppercase text-ink">Estocástica & HJB</h2>
+                    </div>
+                    <div class="md:col-span-8 space-y-4">
+                        <p class="font-serif italic text-xl text-stone-800 leading-relaxed">
+                            El nivel de interés evoluciona mediante una ecuación diferencial estocástica con saltos de Poisson. La condición de parada óptima viene dada por la ecuación de Hamilton-Jacobi-Bellman.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- RESULTADO DESTACADO DE HJB -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 font-mono">
+                    <div class="p-6 border-2 border-ink bg-paper flex flex-col justify-between">
+                        <span class="text-xs uppercase tracking-widest text-ink font-bold">[ QUÉ SIGNIFICA ] ESFUERZO APLICADO ($u$)</span>
+                        <div id="hjb-u-res" class="font-display text-5xl text-terracotta mt-2 font-bold">--</div>
+                        <p class="font-serif text-xs text-stone-600 italic mt-2">Es la energía mental y cantidad de mensajes que inviertes en la interacción.</p>
+                    </div>
+
+                    <div class="p-6 border-2 border-terracotta bg-terracotta/10 flex flex-col justify-between">
+                        <span class="text-xs uppercase tracking-widest text-terracotta font-bold">[ QUÉ SIGNIFICA ] LÍMITE CRÍTICO ($i^*$)</span>
+                        <div id="hjb-thresh-res" class="font-display text-5xl text-ink mt-2 font-bold">--</div>
+                        <p class="font-serif text-xs text-stone-700 italic mt-2">Es tu "línea roja": si el chat baja de este puntaje, debes retirarte por salud mental.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfica de Simulación Estocástica -->
+                <div class="pt-4 relative h-80">
+                    <canvas id="interestChart"></canvas>
+                </div>
+
+                <!-- MEME CAPUT II: SHITPOST ESTOCÁSTICO (Estilo cartel analógico) -->
+                <div class="meme-box max-w-sm mx-auto border-2 border-terracotta bg-paper p-4 shadow-md space-y-2 text-center">
+                    <div class="font-mono text-[10px] text-terracotta uppercase font-bold">[ SHITPOST_DETECTED // VISTO_6_HORAS ]</div>
+                    <div class="font-mono text-2xl font-bold text-ink py-2">📈💀📉</div>
+                    <p class="font-mono text-xs text-stone-700 uppercase">"Yo viendo cómo el salto de Poisson destruye mi salud mental a las 3:00 AM tras 6 horas en visto."</p>
+                </div>
+
+                <!-- EXPLICACIÓN SENCILLA CON ESPECIFICACIÓN DE EJES X Y Y -->
+                <div class="border-2 border-ink bg-paper p-6 sm:p-8 space-y-4">
+                    <div class="flex items-center gap-2 font-mono text-xs text-terracotta uppercase font-bold tracking-widest border-b border-warmgray pb-2">
+                        <span>[ GUÍA FÁCIL DE LECTURA DE LA GRÁFICA ]</span>
+                    </div>
+
+                    <!-- DETALLE DE EJES X E Y -->
+                    <div class="bg-warmgray/40 p-4 border-l-4 border-ink font-mono text-xs space-y-2 text-stone-800">
+                        <div><strong>• EJE X (Horizontal):</strong> Representa el <em>Tiempo / Mensajes Enviados</em>. Avanza a medida que la conversación progresa paso a paso.</div>
+                        <div><strong>• EJE Y (Vertical):</strong> Representa el <em>Nivel de Interés ($I_t$)</em>. Entre más alto esté la curva en el eje vertical, mayor es la atracción en ese momento.</div>
+                    </div>
+
+                    <p class="text-stone-800 text-sm sm:text-base leading-relaxed pt-2">
+                        Piensa en esta gráfica como la <strong>barra de vida en un videojuego</strong>:
                     </p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Pie de página -->
-        <footer class="text-center text-xs text-stone-500 py-12 border-t border-stone-300 font-serif-custom italic">
-            Basado en los modelos formales de Ethan Bilderbeek &bull; Diseñado para GitHub Pages
-        </footer>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-stone-700">
+                        <div class="space-y-2 border-l-2 border-ink pl-4">
+                            <strong class="text-ink font-mono text-xs block uppercase">1. La Línea Negra ($I_t$)</strong>
+                            <p>Es la vida actual del chat en el eje Y a lo largo del tiempo (eje X). Sube cuando le echas ganas y cae si la plática se enfría.</p>
+                        </div>
+
+                        <div class="space-y-2 border-l-2 border-terracotta pl-4">
+                            <strong class="text-terracotta font-mono text-xs block uppercase">2. La Caída Repentina</strong>
+                            <p>Son imprevistos o "golpes", como cuando te dejan en <em>visto</em> durante horas. La línea cae vertiginosamente en el eje Y.</p>
+                        </div>
+
+                        <div class="space-y-2 border-l-2 border-gold pl-4">
+                            <strong class="text-gold font-mono text-xs block uppercase">3. La Línea Roja Discontinua ($i^*$)</strong>
+                            <p>Es tu límite de dignidad. Si la línea negra cae por debajo de la roja, ¡Game Over! Significa que debes parar y retirarte.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CAPUT III: REGLA DEL 1/e -->
+            <section class="space-y-12">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-warmgray pb-8 items-start">
+                    <div class="md:col-span-4">
+                        <span class="font-gothic text-2xl text-terracotta block">Caput III</span>
+                        <h2 class="font-display text-4xl uppercase text-ink">Regla del $1/e$</h2>
+                    </div>
+                    <div class="md:col-span-8 space-y-4">
+                        <p class="font-serif italic text-xl text-stone-800 leading-relaxed">
+                            Rechazar al primer tercio de candidatos ($\lfloor n/e \rfloor$) no es perder el tiempo, es la fase óptima de recolección de datos empíricos.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- MEME CAPUT III: SHITPOST MATEMÁTICO -->
+                <div class="meme-box max-w-sm mx-auto border-2 border-ink bg-paper p-4 shadow-md space-y-2 text-center">
+                    <div class="font-mono text-[10px] text-stone-500 uppercase font-bold">[ SHITPOST_SECRETARIA // 1_OVER_E ]</div>
+                    <div class="font-mono text-3xl font-bold text-terracotta py-1">2.71828... 🤡</div>
+                    <p class="font-mono text-xs text-stone-700 uppercase">"Yo calculando exactamente a qué ex ignorar basándome en la constante de Euler para no perder la dignidad."</p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Matriz Inmutable de Personas -->
+                    <div id="people-container" class="grid grid-cols-5 sm:grid-cols-10 gap-4 py-8 select-none border-y border-ink"></div>
+
+                    <!-- RESULTADOS DESTACADOS EN RECUADROS SIMILARES -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 font-mono">
+                        <div class="p-6 border-2 border-ink bg-paper">
+                            <div class="text-xs text-ink uppercase font-bold tracking-widest">[ QUÉ SIGNIFICA ] MUESTRA A DESCARTAR</div>
+                            <div id="cutoff-res" class="font-display text-5xl text-stone-700 font-bold mt-2">--</div>
+                            <p class="font-serif text-xs text-stone-600 italic mt-2">Personas que debes rechazar al inicio únicamente para conocer el estándar del mercado sin comprometerte.</p>
+                        </div>
+
+                        <div class="p-6 border-2 border-terracotta bg-terracotta/10">
+                            <div class="text-xs text-terracotta uppercase font-bold tracking-widest">[ QUÉ SIGNIFICA ] PARADA ÓPTIMA</div>
+                            <div id="select-res" class="font-display text-5xl text-terracotta font-bold mt-2">#--</div>
+                            <p class="font-serif text-xs text-stone-700 italic mt-2">Acepta formalmente a la primera persona que supere el récord de todos los descartados anteriores.</p>
+                        </div>
+                    </div>
+
+                    <!-- Fórmulas Ampliadas -->
+                    <div class="pt-8 border-t border-warmgray space-y-6">
+                        <div class="font-mono text-xs uppercase tracking-widest text-stone-400">TEOREMA DE PARADA ÓPTIMA DE LA SECRETARIA</div>
+                        
+                        <div class="font-mono text-base text-ink bg-warmgray/30 p-6 border-l-4 border-terracotta overflow-x-auto space-y-4">
+                            <p class="text-xs font-serif italic text-stone-700">Dado un horizonte evaluativo de <span id="formula-n-val" class="font-bold text-terracotta">n</span> prospectos, la teoría fija el tamaño óptimo de muestra rechazada $r^*$ mediante:</p>
+                            
+                            <div class="text-3xl sm:text-4xl text-center py-3 font-bold">
+                                $$r^* = \left\lfloor \frac{n}{e} \right\rfloor \approx 0.368 \, n$$
+                            </div>
+
+                            <p class="text-xs font-serif italic text-stone-700">Y la probabilidad acumulada de seleccionar al candidato de máxima calidad global se estabiliza asintóticamente en:</p>
+
+                            <div class="text-3xl sm:text-4xl text-center py-3 font-bold">
+                                $$P(\text{Éxito}) = \lim_{n \to \infty} \frac{r^*}{n} \sum_{k=r^*}^{n-1} \frac{1}{k} = \frac{1}{e} \approx 36.78\%$$
+                            </div>
+                        </div>
+
+                        <div id="formula-explanation-text" class="font-serif text-base text-stone-800 italic leading-relaxed pt-2 font-medium">
+                            <!-- Inyectado mediante JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center font-mono text-xs text-stone-500 py-16 border-t border-warmgray">
+                CHICAGO ACADEMIC PRESS &bull; MMXXVI
+            </footer>
+
+        </div>
 
     </main>
 
-    <!-- Script para el fondo animado y lógica interactiva -->
+    <!-- Script de Lógica -->
     <script>
-        // --- Fondo Animado (Partículas flotantes estilo tinta/coordenadas) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
+        let step = 0;
 
-        function resize() {
+        const formulas = [
+            "ℛ = ∫ K(x,y)ψ(y)dy",
+            "dX_t = μ(X_t, t)dt + σ(X_t, t)dW_t",
+            "min 𝔼 [ ∫ f(t)dt ]",
+            "K(x,y) = exp(-d_g² / 2τ²)(1 + βΦΦ)",
+            "∂V/∂t + ℒV = 0",
+            "P(Success) = 1/e ≈ 0.3678"
+        ];
+
+        function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 35; i++) {
             particles.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
                 vx: (Math.random() - 0.5) * 0.3,
                 vy: (Math.random() - 0.5) * 0.3,
-                radius: Math.random() * 1.5 + 0.5
+                radius: Math.random() * 1.5 + 0.8
             });
         }
 
-        function animateBg() {
+        function animateBackground() {
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = 'rgba(120, 113, 108, 0.3)';
-            ctx.strokeStyle = 'rgba(120, 113, 108, 0.1)';
+            
+            ctx.fillStyle = 'rgba(194, 84, 56, 0.4)';
+            ctx.strokeStyle = 'rgba(194, 84, 56, 0.12)';
 
             particles.forEach((p, index) => {
                 p.x += p.vx;
@@ -244,7 +423,6 @@
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Conectar partículas cercanas con líneas tenues
                 for (let j = index + 1; j < particles.length; j++) {
                     let p2 = particles[j];
                     let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
@@ -256,89 +434,331 @@
                     }
                 }
             });
-            requestAnimationFrame(animateBg);
+
+            ctx.font = "13px 'Space Mono', monospace";
+            ctx.fillStyle = 'rgba(194, 84, 56, 0.3)';
+
+            formulas.forEach((formula, index) => {
+                const x = (width * 0.18 * index + step * 0.4) % (width + 300) - 150;
+                const y = (height * 0.15 * (index + 1) + Math.sin(step * 0.01 + index) * 35);
+                ctx.fillText(formula, x, y);
+            });
+
+            step++;
+            requestAnimationFrame(animateBackground);
         }
-        animateBg();
+        animateBackground();
 
-        // --- 1. Operador Rizz Logic ---
-        const tauInput = document.getElementById('tau');
-        const betaInput = document.getElementById('beta');
-        const phiInput = document.getElementById('phi');
+        const allQuestions = [
+            { title: "I. FLEXIBILIDAD ANTE DIVERGENCIAS", q: "Si tu crush tiene gustos o creencias opuestas a ti, ¿cuál es tu actitud inmediata?", o: [
+                { l: "Totalmente abierto. La diversidad enriquece la interacción.", t: 1.2, b: 0.5, phi: 0.2 },
+                { l: "Tolerable, mientras exista respeto mutuo.", t: 0.4, b: 0.2, phi: 0.0 },
+                { l: "Incompatible. Intento corregir sus ideas o me distancio.", t: -1.2, b: -0.5, phi: -0.3 }
+            ]},
+            { title: "II. LABIA & CARISMA SOCIAL", q: "En un grupo o cita, tu capacidad para improvisar charla e inspirar risas es:", o: [
+                { l: "Espontánea y magnética. Domino la conversación con soltura.", t: 0.3, b: 2.2, phi: 0.5 },
+                { l: "Agradable si hay confianza, aunque a veces me cuesta arrancar.", t: 0.1, b: 0.6, phi: 0.1 },
+                { l: "Reservada y fría. Me incomoda romper el hielo.", t: -0.3, b: -1.2, phi: -0.4 }
+            ]},
+            { title: "III. PROYECCIÓN DE PASIÓN", q: "Cuando hablas de tus proyectos o temas preferidos, la otra persona percibe:", o: [
+                { l: "Fuego contagioso e intensidad fascinante.", t: 0.5, b: 1.2, phi: 1.5 },
+                { l: "Entusiasmo moderado y equilibrio de tiempos.", t: 0.2, b: 0.4, phi: 0.4 },
+                { l: "Monotonía y frialdad sin expresión de emoción.", t: -0.3, b: -0.5, phi: -0.8 }
+            ]},
+            { title: "IV. ADAPTABILIDAD DE RUTINA", q: "¿Qué tan dispuesto estás a cambiar tus planes para hacer algo totalmente nuevo por un prospecto?", o: [
+                { l: "Muy dispuesto; adoro las aventuras imprevistas.", t: 1.0, b: 0.6, phi: 0.5 },
+                { l: "Lo evalúo en el momento según el plan.", t: 0.2, b: 0.1, phi: 0.0 },
+                { l: "Cero. Mi agenda e intocable zona de confort son sagradas.", t: -1.0, b: -0.5, phi: -0.4 }
+            ]},
+            { title: "V. ESTADO BASE EN REPOSO", q: "¿Cómo definirías tu vibra natural antes de iniciar cualquier interacción?", o: [
+                { l: "Energía vibrante y optimismo seguro.", t: 0.5, b: 1.0, phi: 0.8 },
+                { l: "Tranquila y neutral, en observación pasiva.", t: 0.1, b: 0.2, phi: 0.1 },
+                { l: "Tensa, distante o a la defensiva.", t: -0.5, b: -0.8, phi: -0.6 }
+            ]},
+            { title: "VI. REACCIÓN ANTE EL VISTO", q: "Te dejan en 'visto' durante 6 horas en un chat clave. Tu reacción táctica es:", o: [
+                { l: "Despreocupación total; envío un meme relajado más tarde.", u: 4.2, r: 0.05 },
+                { l: "Estrategia fría; espero el triple de tiempo antes de responder.", u: 2.0, r: 0.10 },
+                { l: "Ansiedad o resentimiento; doy por terminada la relación.", u: 0.5, r: 0.20 }
+            ]},
+            { title: "VII. DENSIDAD DE COMPETENCIA", q: "¿Cuánta competencia percibes en el entorno social de la persona que te gusta?", o: [
+                { l: "Mucha competencia; mucha gente le escribe constantemente.", u: 0.0, r: 0.35 },
+                { l: "Nivel normal de interacciones en redes.", u: 0.0, r: 0.15 },
+                { l: "Mínima competencia; vive casi en aislamiento digital.", u: 0.0, r: 0.03 }
+            ]},
+            { title: "VIII. CONSTANCIA DE CONTACTO", q: "Si la conversación decae por un par de días, ¿vuelves a escribir primero?", o: [
+                { l: "Sí, retomo el chat con creatividad y sin orgullo.", u: 1.5, r: 0.00 },
+                { l: "Evaluado según la vibra del último mensaje.", u: 0.0, r: 0.00 },
+                { l: "Jamás; prefiero perder el contacto que la dignidad.", u: -1.0, r: 0.10 }
+            ]},
+            { title: "IX. HORIZONTE DE BÚSQUEDA", q: "¿A cuántas personas podrías conocer formalmente antes de tomar una decisión de pareja?", o: [
+                { l: "Muestra pequeña e íntima (n = 15 candidatos).", n: 15 },
+                { l: "Mercado estándar universitario/social (n = 30 candidatos).", n: 30 },
+                { l: "Búsqueda masiva en apps y eventos (n = 50 candidatos).", n: 50 }
+            ]},
+            { title: "X. EXIGENCIA PARA EL COMPROMISO", q: "Para dar el paso de formalizar relación con alguien, tú exiges:", o: [
+                { l: "Conexión perfecta e instantánea innegable.", u: 1.0 },
+                { l: "Compatibilidad progresiva demostrada con tiempo.", u: 0.0 },
+                { l: "Flexibilidad; prefiero aprender a querer en la marcha.", u: -0.5 }
+            ]}
+        ];
 
-        function updateRizz() {
-            const tau = parseFloat(tauInput.value);
-            const beta = parseFloat(betaInput.value);
-            const phi = parseFloat(phiInput.value);
+        const idealCategories = [
+            {
+                id: "cat1",
+                title: "1. ARQUETIPO DE PERSONALIDAD",
+                options: [
+                    { label: "Intelectual / Académico (Analítico, reflexivo, metas profundas)", val: 1.5 },
+                    { label: "Artístico / Bohemio (Creativo, expresivo, libre)", val: 1.0 },
+                    { label: "Carismático / Extrovertido (Líder natural, social)", val: 0.5 },
+                    { label: "Tranquilo / Introvertido (Reservado, de círculo íntimo)", val: 0.0 }
+                ]
+            },
+            {
+                id: "cat2",
+                title: "2. DINÁMICA CONVERSACIONAL",
+                options: [
+                    { label: "Sarcástica y rápida (Juego de ingenio y réplicas afiladas)", val: 1.2 },
+                    { label: "Profunda y existencial (Charlas largas sobre la vida y el cosmos)", val: 1.0 },
+                    { label: "Relajada y casual (Memes, música y charlas sin presión)", val: 0.5 },
+                    { label: "Espaciada y distante (Respuestas lentas, alta independencia)", val: -0.5 }
+                ]
+            },
+            {
+                id: "cat3",
+                title: "3. NIVEL DE DEMANDA SOCIAL Y COMPETENCIA",
+                options: [
+                    { label: "Alta demanda (Atrae miradas constantemente; entorno concurrido)", val: -1.0 },
+                    { label: "Círculo moderado (Popularidad equilibrada y selectiva)", val: 0.5 },
+                    { label: "Perfil bajo (Poco activo en redes, vida privada y ermitaña)", val: 1.0 },
+                    { label: "Entorno caótico / impredecible (Alta movilidad social)", val: 0.0 }
+                ]
+            },
+            {
+                id: "cat4",
+                title: "4. NIVEL DE EXIGENCIA EMOCIONAL",
+                options: [
+                    { label: "Muy alta (Exige pruebas constantes de lealtad y atención)", val: -1.5 },
+                    { label: "Equilibrada (Busca reciprocidad natural y madurez afectiva)", val: 1.2 },
+                    { label: "Baja / Flexible (Muy abierto a conocer gente sin presiones)", val: 1.5 },
+                    { label: "Defensiva (Mantiene distancia por precaución o frialdad)", val: -0.8 }
+                ]
+            },
+            {
+                id: "cat5",
+                title: "5. ALINEACIÓN DE OBJETIVOS VITALES",
+                options: [
+                    { label: "Hiperenfocado en su carrera / ciencia / proyectos", val: 1.0 },
+                    { label: "Buscador de experiencias, viajes y exploración", val: 0.8 },
+                    { label: "Centrado en la estabilidad y el confort cotidiano", val: 0.5 },
+                    { label: "Espíritu libre sin rumbo fijo, viviendo al día", val: -0.5 }
+                ]
+            }
+        ];
 
-            document.getElementById('tau-val').innerText = tau.toFixed(1);
-            document.getElementById('beta-val').innerText = beta.toFixed(1);
-            document.getElementById('phi-val').innerText = phi.toFixed(1);
+        let currentStep = 0;
+        let userAnswers = {};
+        let idealSelections = {};
+
+        const stepContent = document.getElementById('wizard-step-content');
+        const wizardCounter = document.getElementById('wizard-counter');
+        const prevBtn = document.getElementById('wizard-prev');
+        const nextBtn = document.getElementById('wizard-next');
+
+        function renderWizardStep() {
+            const q = allQuestions[currentStep];
+            wizardCounter.textContent = `INDEX: ${String(currentStep + 1).padStart(2, '0')} / 10`;
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.textContent = currentStep === allQuestions.length - 1 ? '[ IR A SELECTOR DEL IDEAL ]' : '[ NEXT ]';
+
+            let html = `
+                <div class="space-y-4">
+                    <span class="font-mono text-xs text-terracotta tracking-widest">${q.title}</span>
+                    <p class="font-display text-2xl sm:text-3xl text-ink leading-snug uppercase">${q.q}</p>
+                    <div class="grid grid-cols-1 gap-3 pt-4">
+            `;
+
+            q.o.forEach((opt, idx) => {
+                const isSelected = userAnswers[currentStep] === idx;
+                html += `
+                    <button type="button" onclick="selectWizardOption(${currentStep}, ${idx})" 
+                        class="option-card text-left p-4 border transition-all duration-200 flex items-center justify-between bg-transparent ${isSelected ? 'border-terracotta text-ink font-bold' : 'border-warmgray hover:border-ink text-stone-700'}">
+                        <span class="font-mono text-xs sm:text-sm">${opt.l}</span>
+                        <span class="font-mono text-xs ${isSelected ? 'text-terracotta font-bold' : 'text-stone-300'}">
+                            ${isSelected ? '[X]' : '[ ]'}
+                        </span>
+                    </button>
+                `;
+            });
+
+            html += `</div></div>`;
+            stepContent.innerHTML = html;
+        }
+
+        window.selectWizardOption = function(step, optIdx) {
+            userAnswers[step] = optIdx;
+            renderWizardStep();
+        };
+
+        prevBtn.addEventListener('click', () => { if (currentStep > 0) { currentStep--; renderWizardStep(); } });
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < allQuestions.length - 1) {
+                if (userAnswers[currentStep] === undefined) {
+                    alert("Por favor selecciona una opción antes de continuar.");
+                    return;
+                }
+                currentStep++;
+                renderWizardStep();
+            } else {
+                if (userAnswers[currentStep] === undefined) {
+                    alert("Por favor selecciona una opción para continuar.");
+                    return;
+                }
+                renderIdealCategories();
+                document.getElementById('phase-quiz').classList.add('hidden');
+                document.getElementById('phase-ideal').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        renderWizardStep();
+
+        function renderIdealCategories() {
+            const container = document.getElementById('ideal-categories-container');
+            container.innerHTML = '';
+
+            idealCategories.forEach((cat, catIdx) => {
+                let block = `
+                    <div class="space-y-3 border-b border-warmgray pb-6">
+                        <span class="font-mono text-xs text-terracotta font-bold block">${cat.title}</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                `;
+
+                cat.options.forEach((opt, optIdx) => {
+                    const isSelected = idealSelections[cat.id] === optIdx;
+                    block += `
+                        <button type="button" onclick="selectIdealOption('${cat.id}', ${optIdx})" 
+                            class="option-card text-left p-3 border transition-all duration-200 flex items-center justify-between bg-transparent ${isSelected ? 'border-terracotta text-ink font-bold bg-terracotta/5' : 'border-warmgray hover:border-ink text-stone-700'}">
+                            <span class="font-mono text-xs">${opt.label}</span>
+                            <span class="font-mono text-xs ${isSelected ? 'text-terracotta font-bold' : 'text-stone-300'}">${isSelected ? '[X]' : '[ ]'}</span>
+                        </button>
+                    `;
+                });
+
+                block += `</div></div>`;
+                container.innerHTML += block;
+            });
+        }
+
+        window.selectIdealOption = function(catId, optIdx) {
+            idealSelections[catId] = optIdx;
+            renderIdealCategories();
+        };
+
+        document.getElementById('evaluate-ideal-btn').addEventListener('click', () => {
+            if (Object.keys(idealSelections).length < idealCategories.length) {
+                alert("Por favor selecciona una opción en cada una de las 5 categorías para completar el análisis.");
+                return;
+            }
+            
+            let tau = 1.5, beta = 3.0, phi = 2.0;
+            let u = 2.5, r = 0.10, n = 30;
+
+            Object.keys(userAnswers).forEach(sIdx => {
+                const q = allQuestions[sIdx];
+                const opt = q.o[userAnswers[sIdx]];
+
+                if (opt.t !== undefined) tau += opt.t;
+                if (opt.b !== undefined) beta += opt.b;
+                if (opt.phi !== undefined) phi += opt.phi;
+                if (opt.u !== undefined) u += opt.u;
+                if (opt.r !== undefined) r += opt.r;
+                if (opt.n !== undefined) n = opt.n;
+            });
+
+            tau = Math.max(0.2, Math.min(5.0, tau));
+            beta = Math.max(0.0, Math.min(10.0, beta));
+            phi = Math.max(0.1, Math.min(5.0, phi));
+            u = Math.max(0.1, Math.min(5.0, u));
+            r = Math.max(0.01, Math.min(0.5, r));
 
             const lambda1 = 1.0 + (beta * Math.pow(phi, 2) * (1.5 / tau));
             const delta = lambda1 / (2.0 + tau);
 
+            let idealSumScore = 0;
+            idealCategories.forEach(cat => {
+                const chosenOptIdx = idealSelections[cat.id];
+                idealSumScore += cat.options[chosenOptIdx].val;
+            });
+
+            let matchProb = Math.min(96.8, Math.max(15.0, (36.78 + (lambda1 * 3.0) + (idealSumScore * 7.5) - (r * 15.0))));
+
+            document.getElementById('phase-ideal').classList.add('hidden');
+            const dash = document.getElementById('phase-dashboard');
+            dash.classList.remove('hidden');
+
+            document.getElementById('res-tau').innerText = tau.toFixed(1);
+            document.getElementById('res-beta').innerText = beta.toFixed(1);
+            document.getElementById('res-phi').innerText = phi.toFixed(1);
+
             document.getElementById('lambda1-res').innerText = lambda1.toFixed(2);
             document.getElementById('delta-res').innerText = delta.toFixed(2);
 
+            const diagBadge = document.getElementById('diagnostic-badge');
             const adviceBox = document.getElementById('rizz-advice');
+
             if (lambda1 < 3.0) {
-                adviceBox.innerHTML = '⚠️ <strong>Diagnóstico:</strong> Rizz insuficiente. <em>"Touch grass to reduce curvature."</em>[cite: 5]';
+                diagBadge.textContent = "[ INSUFFICIENT_SPECTRAL_RIZZ ]";
+                diagBadge.className = "font-mono text-xs uppercase tracking-widest text-stone-500 font-bold bg-transparent";
+                adviceBox.innerHTML = 'Diagnóstico: Rigidez severa en el colector riemanniano. Se requiere reducción de curvatura.';
             } else if (lambda1 < 10.0) {
-                adviceBox.innerHTML = '✨ <strong>Diagnóstico:</strong> Estado Estable. Convergencia geométrica alcanzada hacia el estado de encanto.';
+                diagBadge.textContent = "[ STABLE_CONVERGENCE ]";
+                diagBadge.className = "font-mono text-xs uppercase tracking-widest text-gold font-bold bg-transparent";
+                adviceBox.innerHTML = 'Diagnóstico: Convergencia geométrica alcanzada. El nivel de atracción entra en fase estable.';
             } else {
-                adviceBox.innerHTML = '🔥 <strong>Diagnóstico:</strong> Nivel Máximo. El autovalor principal domina el colector con alta intensidad.';
+                diagBadge.textContent = "[ MAXIMAL_SPECTRAL_DENSITY ]";
+                diagBadge.className = "font-mono text-xs uppercase tracking-widest text-terracotta font-bold bg-transparent animate-pulse";
+                adviceBox.innerHTML = 'Diagnóstico: El autovalor principal domina el espacio fibrado con intensidad gravitacional.';
             }
-        }
 
-        [tauInput, betaInput, phiInput].forEach(el => el.addEventListener('input', updateRizz));
-        updateRizz();
+            const targetThreshold = 4.0 + (r * 2.0) - (u * 0.3);
+            document.getElementById('hjb-u-res').innerText = u.toFixed(1);
+            document.getElementById('hjb-thresh-res').innerText = targetThreshold.toFixed(2);
 
-        // --- 2. Chart.js Stochastic Simulation Logic ---
-        const uInput = document.getElementById('control-u');
-        const rInput = document.getElementById('discount-r');
-        document.getElementById('val-u').innerText = uInput.value;
-        document.getElementById('val-r').innerText = parseFloat(rInput.value).toFixed(2);
+            initChart(u, r, targetThreshold);
 
-        uInput.addEventListener('input', () => document.getElementById('val-u').innerText = uInput.value);
-        rInput.addEventListener('input', () => document.getElementById('val-r').innerText = parseFloat(rInput.value).toFixed(2));
+            document.getElementById('hero-prob-val').innerText = `${matchProb.toFixed(1)}%`;
+            
+            const heroDesc = document.getElementById('hero-prob-desc');
+            const idealFeedback = document.getElementById('ideal-feedback-box');
 
-        const ctxChart = document.getElementById('interestChart').getContext('2d');
-        let interestChart = new Chart(ctxChart, {
-            type: 'line',
-            data: {
-                labels: Array.from({length: 50}, (_, i) => i),
-                datasets: [{
-                    label: 'Nivel de Interés (It)',
-                    data: [],
-                    borderColor: '#b45309',
-                    backgroundColor: 'rgba(180, 83, 9, 0.05)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.2
-                }, {
-                    label: 'Umbral Crítico (i*)',
-                    data: [],
-                    borderColor: '#e11d48',
-                    borderDash: [4, 4],
-                    borderWidth: 1.5,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { grid: { color: '#e7e5e4' }, ticks: { color: '#78716c' } },
-                    y: { grid: { color: '#e7e5e4' }, ticks: { color: '#78716c' }, min: -2, max: 10 }
-                },
-                plugins: { legend: { labels: { color: '#44403c', font: { family: 'Inter' } } } }
+            if (matchProb > 70) {
+                heroDesc.innerText = "¡Alta probabilidad de éxito! Tu campo espectral sintoniza perfectamente con el perfil estructurado seleccionado.";
+                idealFeedback.innerHTML = `[ ANÁLISIS DE ACOPLAMIENTO ]: Resonancia armónica alta entre tu vector de Rizz y las 5 categorías elegidas. Trayectorias estables.`;
+            } else if (matchProb > 40) {
+                heroDesc.innerText = "Probabilidad Moderada. El acoplamiento es viable, pero requiere gestión estocástica cuidadosa.";
+                idealFeedback.innerHTML = `[ ANÁLISIS DE ACOPLAMIENTO ]: Resonancia parcial detectada. Se aconseja regular el esfuerzo conversacional ($u$).`;
+            } else {
+                heroDesc.innerText = "Probabilidad Ajustada. Alta fricción geométrica respecto al perfil seleccionado.";
+                idealFeedback.innerHTML = `[ ANÁLISIS DE ACOPLAMIENTO ]: Desfase espectral importante frente al arquetipo elegido. Alto riesgo de divergencia.`;
             }
+
+            renderInflexiblePeople(n);
+
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        function runSimulation() {
-            const u = parseFloat(uInput.value);
-            const r = parseFloat(rInput.value);
-            const targetThreshold = 4.0 + (r * 2.0) - (u * 0.3);
+        let interestChart = null;
+        function initChart(u, r, targetThreshold) {
+            const ctxChart = document.getElementById('interestChart').getContext('2d');
 
             let currentI = 1.0;
             let dataPoints = [currentI];
@@ -347,7 +767,7 @@
             for (let i = 1; i < 50; i++) {
                 let drift = 0.2 * (u - currentI);
                 let diffusion = (Math.random() - 0.5) * 1.2;
-                let jump = (Math.random() < 0.08) ? -3.0 : 0.0; // Left on read jump[cite: 3]
+                let jump = (Math.random() < 0.08) ? -3.0 : 0.0;
 
                 currentI += drift + diffusion + jump;
                 if (currentI < -2) currentI = -2;
@@ -355,25 +775,85 @@
                 thresholdLine.push(targetThreshold);
             }
 
-            interestChart.data.datasets[0].data = dataPoints;
-            interestChart.data.datasets[1].data = thresholdLine;
-            interestChart.update();
+            if (interestChart) interestChart.destroy();
+
+            interestChart = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 50}, (_, i) => i),
+                    datasets: [{
+                        label: 'Vida del Chat (Interés)',
+                        data: dataPoints,
+                        borderColor: '#161616',
+                        backgroundColor: 'rgba(22, 22, 22, 0.03)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2
+                    }, {
+                        label: 'Límite de Dignidad (i*)',
+                        data: thresholdLine,
+                        borderColor: '#C25438',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            grid: { color: '#EBE7DF' }, 
+                            ticks: { color: '#737373', font: { family: 'Space Mono' } },
+                            title: { display: true, text: 'Tiempo / Pasos del Chat (Eje X)', color: '#161616', font: { family: 'Space Mono', size: 10 } }
+                        },
+                        y: { 
+                            grid: { color: '#EBE7DF' }, 
+                            ticks: { color: '#737373', font: { family: 'Space Mono' } }, 
+                            min: -2, 
+                            max: 10,
+                            title: { display: true, text: 'Nivel de Interés Relativo (Eje Y)', color: '#161616', font: { family: 'Space Mono', size: 10 } }
+                        }
+                    },
+                    plugins: { legend: { labels: { color: '#161616', font: { family: 'Space Mono' } } } }
+                }
+            });
         }
 
-        document.getElementById('run-sim').addEventListener('click', runSimulation);
-        runSimulation();
+        const svgPerson = `
+            <svg class="w-7 h-7 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        `;
 
-        // --- 3. Secretary Problem Logic ---
-        const nInput = document.getElementById('prospects-n');
-        function updateSecretary() {
-            const n = parseInt(nInput.value);
-            document.getElementById('n-val').innerText = n;
-            const cutoff = Math.round(n / Math.E);
+        function renderInflexiblePeople(n) {
+            const container = document.getElementById('people-container');
+            container.innerHTML = '';
+            const cutoff = Math.floor(n / Math.E);
+
+            for (let i = 1; i <= n; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'text-center py-2';
+
+                if (i <= cutoff) {
+                    wrapper.className += ' text-stone-400 opacity-60'; 
+                } else if (i === cutoff + 1) {
+                    wrapper.className += ' text-terracotta font-bold scale-110'; 
+                } else {
+                    wrapper.className += ' text-ink'; 
+                }
+
+                wrapper.innerHTML = svgPerson;
+                container.appendChild(wrapper);
+            }
+
             document.getElementById('cutoff-res').innerText = cutoff;
-            document.getElementById('cutoff-desc').innerHTML = `Rechaza puramente a los primeros <strong>${cutoff}</strong> candidatos (fase de datos) y comprométete con el primero que supere al mejor de ese grupo[cite: 6].`;
+            document.getElementById('select-res').innerText = `#${cutoff + 1}`;
+            document.getElementById('formula-n-val').innerText = n;
+
+            document.getElementById('formula-explanation-text').innerHTML = 
+                `Con un universo de ${n} prospectos, la teoría demuestra matemáticamente que debes descartar empíricamente a los primeros ${cutoff} candidatos sin compromiso formal. El candidato #${cutoff + 1} representa la parada óptima.`;
         }
-        nInput.addEventListener('input', updateSecretary);
-        updateSecretary();
     </script>
 </body>
 </html>

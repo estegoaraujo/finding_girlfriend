@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Romantic Equilibria & Stochastic Partner Acquisition</title>
+    <title>Equilibrios Románticos — Una Perspectiva Matemática</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Serif editorial y Sans limpia -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
     <!-- KaTeX JS -->
@@ -20,74 +24,94 @@
                 {left: '$', right: '$', display: false}
             ]
         });"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f5ef;
+            color: #222225;
+        }
+        .font-serif-custom {
+            font-family: 'Lora', serif;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen p-4 md:p-8">
+<body class="min-h-screen antialiased py-12 px-4 sm:px-6 lg:px-8">
 
-    <div class="max-w-5xl mx-auto space-y-10">
+    <main class="max-w-4xl mx-auto space-y-16">
         
-        <!-- Header -->
-        <header class="text-center space-y-3 border-b border-slate-800 pb-6">
-            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-500">
-                Romantic Equilibria
+        <!-- Cabecera Editorial -->
+        <header class="text-center space-y-4 border-b border-stone-300 pb-10">
+            <span class="text-xs uppercase tracking-widest text-amber-800 font-semibold bg-amber-100 px-3 py-1 rounded-full">
+                Divulgación Matemática &bull; University of Chicago
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-serif-custom font-bold tracking-tight text-stone-900 leading-tight">
+                Equilibrios Románticos
             </h1>
-            <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
-                Implementación interactiva basada en el marco formal de Ethan Bilderbeek (Department of Computational and Applied Mathematics, University of Chicago).
+            <p class="text-stone-600 max-w-2xl mx-auto text-base sm:text-lg font-serif-custom italic">
+                Una aproximación basada en teoría de medidas, control estocástico y geometría riemanniana para la adquisición de pareja[cite: 1].
             </p>
         </header>
 
-        <!-- SECCIÓN 1: OPERATOR RIZZ -->
-        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-            <div class="space-y-2">
-                <span class="text-xs uppercase tracking-wider text-pink-400 font-semibold">Modelo 1</span>
-                <h2 class="text-2xl font-bold text-slate-100">El Operador Rizz ($\mathcal{R}$)</h2>
-                <p class="text-slate-300 text-sm">
-                    El operador integral compacto $\mathcal{R}: \mathcal{H} \to \mathcal{H}$ sobre el espacio de Hilbert gobierna el comportamiento a largo plazo del interés mutuo mediante el núcleo $K(x,y)$[cite: 1, 2]:
+        <!-- SECCIÓN 1: EL OPERADOR RIZZ -->
+        <section class="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm space-y-8">
+            <div class="space-y-3">
+                <span class="text-xs uppercase tracking-wider text-amber-700 font-bold">Capítulo I</span>
+                <h2 class="text-3xl font-serif-custom font-bold text-stone-900">El Operador Rizz ($\mathcal{R}$)</h2>
+                
+                <!-- Metáfora para 12 años -->
+                <div class="bg-stone-50 border-l-4 border-amber-600 p-4 rounded-r-lg text-stone-700 text-sm leading-relaxed">
+                    <strong class="text-stone-900">¿Cómo funciona en la vida real? (La metáfora de la estación de radio):</strong> 
+                    Imagina que cada persona emite una "frecuencia de onda" hecha de sus gustos musicales, política y pasiones en un mapa gigante[cite: 1]. Tu <em>Rizz</em> es la potencia con la que logras sintonizar esa frecuencia sin interferencia estática. Si tu radio está mal calibrada, por mucho que hables, la señal no llega[cite: 2].
+                </div>
+
+                <p class="text-stone-600 text-sm leading-relaxed">
+                    Formalmente, el núcleo $K(x,y)$ combina la tolerancia ante desacuerdos en el colector riemanniano $\mathcal{M}$ y tu coeficiente de carisma $\beta$[cite: 1, 2]:
                 </p>
-                <div class="bg-slate-950 p-4 rounded-lg overflow-x-auto text-center border border-slate-800/60 my-2">
-                    $K(x,y) = \exp\left(-\frac{d_g(x,y)^2}{2\tau^2}\right)(1 + \beta \Phi(x)\Phi(y))$
+                <div class="bg-stone-900 text-stone-100 p-4 rounded-xl overflow-x-auto text-center font-mono text-sm shadow-inner">
+                    $$K(x,y) = \exp\left(-\frac{d_g(x,y)^2}{2\tau^2}\right)(1 + \beta \Phi(x)\Phi(y))$$
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-4 border-t border-stone-100">
                 <!-- Controles -->
-                <div class="space-y-4 bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">
-                            Radio de Tolerancia ($\tau$): <span id="tau-val" class="text-pink-400 font-bold">1.5</span>
+                        <label class="block text-sm font-medium text-stone-700 mb-1">
+                            Radio de Tolerancia ($\tau$): <span id="tau-val" class="text-amber-700 font-bold">1.5</span>
                         </label>
-                        <input type="range" id="tau" min="0.2" max="5.0" step="0.1" value="1.5" class="w-full accent-pink-500 cursor-pointer">
-                        <span class="text-xs text-slate-500">Flexibilidad ante desacuerdos musicales y políticos.</span>
+                        <input type="range" id="tau" min="0.2" max="5.0" step="0.1" value="1.5" class="w-full accent-amber-700 cursor-pointer">
+                        <span class="text-xs text-stone-500">Flexibilidad ante diferencias de opinión o gustos.</span>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">
-                            Coeficiente de Carisma ($\beta$): <span id="beta-val" class="text-pink-400 font-bold">3.0</span>
+                        <label class="block text-sm font-medium text-stone-700 mb-1">
+                            Coeficiente de Carisma ($\beta$): <span id="beta-val" class="text-amber-700 font-bold">3.0</span>
                         </label>
-                        <input type="range" id="beta" min="0" max="10" step="0.5" value="3.0" class="w-full accent-pink-500 cursor-pointer">
-                        <span class="text-xs text-slate-500">Nivel de labia y chispa conversacional.</span>
+                        <input type="range" id="beta" min="0" max="10" step="0.5" value="3.0" class="w-full accent-amber-700 cursor-pointer">
+                        <span class="text-xs text-stone-500">Tu labia y chispa conversacional natural[cite: 2].</span>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">
-                            Vibra Promedio ($\Phi$): <span id="phi-val" class="text-pink-400 font-bold">2.0</span>
+                        <label class="block text-sm font-medium text-stone-700 mb-1">
+                            Vibra Promedio ($\Phi$): <span id="phi-val" class="text-amber-700 font-bold">2.0</span>
                         </label>
-                        <input type="range" id="phi" min="0.1" max="5.0" step="0.1" value="2.0" class="w-full accent-pink-500 cursor-pointer">
-                        <span class="text-xs text-slate-500">Intensidad de alineamiento en pasiones.</span>
+                        <input type="range" id="phi" min="0.1" max="5.0" step="0.1" value="2.0" class="w-full accent-amber-700 cursor-pointer">
+                        <span class="text-xs text-stone-500">Intensidad de alineamiento en pasiones[cite: 2].</span>
                     </div>
                 </div>
 
-                <!-- Resultados Rizz -->
-                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4 text-center">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Espectro del Rizz</h3>
+                <!-- Resultados -->
+                <div class="bg-stone-50 border border-stone-200 p-6 rounded-xl space-y-4 text-center">
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-stone-500">Diagnóstico Espectral</h3>
                     <div>
-                        <div class="text-xs text-slate-500">Autovalor Principal ($\lambda_1$)</div>
-                        <div id="lambda1-res" class="text-3xl font-extrabold text-pink-400">--</div>
+                        <div class="text-xs text-stone-500">Autovalor Principal ($\lambda_1$ — Principal Rizz)[cite: 2]</div>
+                        <div id="lambda1-res" class="text-4xl font-serif-custom font-bold text-amber-800">--</div>
                     </div>
                     <div>
-                        <div class="text-xs text-slate-500">Brecha Espectral ($\Delta$)</div>
-                        <div id="delta-res" class="text-xl font-bold text-purple-400">--</div>
+                        <div class="text-xs text-stone-500">Brecha Espectral ($\Delta$)[cite: 2]</div>
+                        <div id="delta-res" class="text-xl font-bold text-stone-800">--</div>
                     </div>
-                    <div id="rizz-advice" class="text-xs p-3 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+                    <div id="rizz-advice" class="text-xs p-3 rounded-lg bg-white border border-stone-200 text-stone-700">
                         Calculando estado de encanto...
                     </div>
                 </div>
@@ -95,69 +119,83 @@
         </section>
 
         <!-- SECCIÓN 2: DINÁMICA ESTOCÁSTICA Y HJB -->
-        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-            <div class="space-y-2">
-                <span class="text-xs uppercase tracking-wider text-purple-400 font-semibold">Modelo 2</span>
-                <h2 class="text-2xl font-bold text-slate-100">Dinámica Estocástica del Interés y Parada Óptima</h2>
-                <p class="text-slate-300 text-sm">
-                    Simulación del proceso de salto-difusión para el nivel de interés $I_t$, incluyendo el término de "dejar en visto" ($\tilde{N}$) y el umbral crítico $i^*$ derivado de la desigualdad variacional de HJB[cite: 3, 4].
+        <section class="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm space-y-8">
+            <div class="space-y-3">
+                <span class="text-xs uppercase tracking-wider text-amber-700 font-bold">Capítulo II</span>
+                <h2 class="text-3xl font-serif-custom font-bold text-stone-900">Dinámica Estocástica del Interés y Parada Óptima</h2>
+                
+                <!-- Metáfora para 12 años -->
+                <div class="bg-stone-50 border-l-4 border-amber-600 p-4 rounded-r-lg text-stone-700 text-sm leading-relaxed">
+                    <strong class="text-stone-900">¿Cómo funciona en la vida real? (El juego del yoyo y el "visto"):</strong> 
+                    El interés de la otra persona sube y baja como un yoyo según cuánto esfuerzo pongas (textos, gym, citas)[cite: 3]. Pero cuidado: existe la temida medida de Poisson de "dejar en visto" $\tilde{N}$, un salto repentino hacia abajo que simula la imprevisibilidad del chat[cite: 3].
+                </div>
+
+                <p class="text-stone-600 text-sm leading-relaxed">
+                    La ecuación diferencial estocástica modela el interés $I_t$, mientras que la desigualdad variacional de Hamilton-Jacobi-Bellman (HJB) determina el momento exacto (*first hitting time*) para jugártela[cite: 3, 4].
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <label class="block text-xs font-medium text-slate-300">Esfuerzo de Control ($u$ - Gimnasio/Textos)</label>
-                    <input type="range" id="control-u" min="0.1" max="5.0" step="0.1" value="2.5" class="w-full accent-purple-500 cursor-pointer">
-                    <div class="text-xs text-purple-400 text-right font-bold" id="val-u">2.5</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
+                    <label class="block text-xs font-medium text-stone-700">Esfuerzo de Control ($u$ - Gimnasio/Textos)[cite: 3]</label>
+                    <input type="range" id="control-u" min="0.1" max="5.0" step="0.1" value="2.5" class="w-full accent-amber-700 cursor-pointer">
+                    <div class="text-xs text-amber-800 text-right font-bold" id="val-u">2.5</div>
                 </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <label class="block text-xs font-medium text-slate-300">Tasa de Descuento ($r$ - Competencia)</label>
-                    <input type="range" id="discount-r" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full accent-purple-500 cursor-pointer">
-                    <div class="text-xs text-purple-400 text-right font-bold" id="val-r">0.10</div>
+                <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
+                    <label class="block text-xs font-medium text-stone-700">Tasa de Descuento ($r$ - Competencia)[cite: 3]</label>
+                    <input type="range" id="discount-r" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full accent-amber-700 cursor-pointer">
+                    <div class="text-xs text-amber-800 text-right font-bold" id="val-r">0.10</div>
                 </div>
-                <div class="flex items-center justify-center bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <button id="run-sim" class="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-lg shadow transition text-sm">
+                <div class="flex items-center justify-center bg-stone-50 p-4 rounded-xl border border-stone-200">
+                    <button id="run-sim" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 font-medium rounded-lg shadow-sm transition text-sm">
                         Simular Interés ($I_t$)
                     </button>
                 </div>
             </div>
 
-            <!-- Gráfica Chart.js -->
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative h-64 md:h-80">
+            <!-- Gráfica Chart.js en tono editorial -->
+            <div class="bg-stone-900 p-4 rounded-xl border border-stone-800 relative h-64 md:h-80 shadow-inner">
                 <canvas id="interestChart"></canvas>
             </div>
         </section>
 
         <!-- SECCIÓN 3: LA LEY DEL 1/e -->
-        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-            <div class="space-y-2">
-                <span class="text-xs uppercase tracking-wider text-indigo-400 font-semibold">Modelo 3</span>
-                <h2 class="text-2xl font-bold text-slate-100">El Problema de la Secretaria y la Ley del $1/e$</h2>
-                <p class="text-slate-300 text-sm">
-                    Calcula cuántos prospectos debes descartar en tu fase de recolección de datos antes de comprometerte irrevocablemente con la primera opción superior[cite: 6].
-                </p>
+        <section class="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm space-y-8">
+            <div class="space-y-3">
+                <span class="text-xs uppercase tracking-wider text-amber-700 font-bold">Capítulo III</span>
+                <h2 class="text-3xl font-serif-custom font-bold text-stone-900">El Problema de la Secretaria y la Ley del $1/e$</h2>
+                
+                <!-- Metáfora para 12 años -->
+                <div class="bg-stone-50 border-l-4 border-amber-600 p-4 rounded-r-lg text-stone-700 text-sm leading-relaxed">
+                    <strong class="text-stone-900">¿Cómo funciona en la vida real? (La regla de la vitrina de helados):</strong> 
+                    Si vas a probar 30 sabores de helado en tu vida, rechazar a ciegas al primer tercio (los primeros 11) no es perder el tiempo: es recopilar información para conocer los estándares del mercado. Después de esa fase, te quedas con el primer sabor que supere al mejor de todos los que ya probaste[cite: 6].
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div class="space-y-4 bg-slate-950/40 p-4 rounded-xl border border-slate-800">
-                    <label class="block text-sm font-medium text-slate-300 mb-1">
-                        Número total de prospectos estimados ($n$): <span id="n-val" class="text-indigo-400 font-bold">30</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
+                <div class="space-y-4 bg-stone-50 p-6 rounded-xl border border-stone-200">
+                    <label class="block text-sm font-medium text-stone-700 mb-1">
+                        Número total de prospectos estimados ($n$): <span id="n-val" class="text-amber-800 font-bold">30</span>
                     </label>
-                    <input type="range" id="prospects-n" min="5" max="100" step="1" value="30" class="w-full accent-indigo-500 cursor-pointer">
-                    <span class="text-xs text-slate-500">Horizonte de candidatos evaluados en tu ciclo académico o anual.</span>
+                    <input type="range" id="prospects-n" min="5" max="100" step="1" value="30" class="w-full accent-amber-700 cursor-pointer">
+                    <span class="text-xs text-stone-500">Horizonte de candidatos evaluados en tu ciclo anual[cite: 6].</span>
                 </div>
 
-                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-3 text-center">
-                    <div class="text-xs text-slate-500 uppercase tracking-wider">Prospectos a descartar (Fase de Datos)</div>
-                    <div id="cutoff-res" class="text-4xl font-extrabold text-indigo-400">11</div>
-                    <p class="text-xs text-slate-400" id="cutoff-desc">
-                        Rechaza puramente a los primeros 11 candidatos y comprométete con el primero que supere al mejor de ese grupo.
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 space-y-3 text-center">
+                    <div class="text-xs text-stone-500 uppercase tracking-widest font-semibold">Prospectos a descartar (Fase de Datos)</div>
+                    <div id="cutoff-res" class="text-5xl font-serif-custom font-extrabold text-amber-800">11</div>
+                    <p class="text-xs text-stone-600 leading-relaxed" id="cutoff-desc">
+                        Rechaza puramente a los primeros <strong>11</strong> candidatos y comprométete con el primero que supere al mejor de ese grupo[cite: 6].
                     </p>
                 </div>
             </div>
         </section>
 
-    </div>
+        <footer class="text-center text-xs text-stone-500 py-6 border-t border-stone-300">
+            Basado en los modelos formales de Ethan Bilderbeek &bull; Diseñado para GitHub Pages
+        </footer>
+
+    </main>
 
     <!-- Script de lógica interactiva -->
     <script>
@@ -175,7 +213,6 @@
             document.getElementById('beta-val').innerText = beta.toFixed(1);
             document.getElementById('phi-val').innerText = phi.toFixed(1);
 
-            // Aproximación analítica basada en Mercer's theorem y Traza del operador: Tr(R) = 1 + beta * ||phi||^2
             const lambda1 = 1.0 + (beta * Math.pow(phi, 2) * (1.5 / tau));
             const delta = lambda1 / (2.0 + tau);
 
@@ -184,14 +221,14 @@
 
             const adviceBox = document.getElementById('rizz-advice');
             if (lambda1 < 3.0) {
-                adviceBox.innerHTML = '⚠️ <strong>Alerta:</strong> Rizz insuficiente. <em>"Touch grass to reduce curvature."</em>[cite: 5]';
-                adviceBox.className = 'text-xs p-3 rounded-lg bg-red-950/40 border border-red-900 text-red-200';
+                adviceBox.innerHTML = '⚠️ <strong>Diagnóstico:</strong> Rizz insuficiente. <em>"Touch grass to reduce curvature."</em>[cite: 5]';
+                adviceBox.className = 'text-xs p-3 rounded-lg bg-red-50 border border-red-200 text-red-800';
             } else if (lambda1 < 10.0) {
-                adviceBox.innerHTML = '✨ <strong>Estado Estable:</strong> Convergencia geométrica alcanzada hacia el estado de encanto.';
-                adviceBox.className = 'text-xs p-3 rounded-lg bg-purple-950/40 border border-purple-900 text-purple-200';
+                adviceBox.innerHTML = '✨ <strong>Diagnóstico:</strong> Estado Estable. Convergencia geométrica alcanzada hacia el estado de encanto.';
+                adviceBox.className = 'text-xs p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900';
             } else {
-                adviceBox.innerHTML = '🔥 <strong>Nivel Máximo:</strong> El autovalor principal domina el colector. Cuidado con el colapso gravitacional.';
-                adviceBox.className = 'text-xs p-3 rounded-lg bg-pink-950/40 border border-pink-900 text-pink-200';
+                adviceBox.innerHTML = '🔥 <strong>Diagnóstico:</strong> Nivel Máximo. El autovalor principal domina el colector con alta intensidad.';
+                adviceBox.className = 'text-xs p-3 rounded-lg bg-stone-100 border border-stone-300 text-stone-900';
             }
         }
 
@@ -215,15 +252,15 @@
                 datasets: [{
                     label: 'Nivel de Interés (It)',
                     data: [],
-                    borderColor: '#c084fc',
-                    backgroundColor: 'rgba(192, 132, 252, 0.1)',
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.2
                 }, {
                     label: 'Umbral Crítico (i*)',
                     data: [],
-                    borderColor: '#f43f5e',
+                    borderColor: '#e11d48',
                     borderDash: [5, 5],
                     borderWidth: 2,
                     pointRadius: 0
@@ -233,10 +270,10 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
-                    y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' }, min: -2, max: 10 }
+                    x: { grid: { color: '#292524' }, ticks: { color: '#a8a29e' } },
+                    y: { grid: { color: '#292524' }, ticks: { color: '#a8a29e' }, min: -2, max: 10 }
                 },
-                plugins: { legend: { labels: { color: '#cbd5e1' } } }
+                plugins: { legend: { labels: { color: '#e7e5e4' } } }
             }
         });
 
@@ -250,10 +287,9 @@
             let thresholdLine = [targetThreshold];
 
             for (let i = 1; i < 50; i++) {
-                // SDE jump diffusion simulation step
                 let drift = 0.2 * (u - currentI);
                 let diffusion = (Math.random() - 0.5) * 1.2;
-                let jump = (Math.random() < 0.08) ? -3.0 : 0.0; // Left on read jump
+                let jump = (Math.random() < 0.08) ? -3.0 : 0.0; // Left on read jump[cite: 3]
 
                 currentI += drift + diffusion + jump;
                 if (currentI < -2) currentI = -2;
@@ -276,7 +312,7 @@
             document.getElementById('n-val').innerText = n;
             const cutoff = Math.round(n / Math.E);
             document.getElementById('cutoff-res').innerText = cutoff;
-            document.getElementById('cutoff-desc').innerHTML = `Rechaza puramente a los primeros <strong>${cutoff}</strong> candidatos (fase de datos) y comprométete con el primero que supere al mejor de ese grupo.`;
+            document.getElementById('cutoff-desc').innerHTML = `Rechaza puramente a los primeros <strong>${cutoff}</strong> candidatos (fase de datos) y comprométete con el primero que supere al mejor de ese grupo[cite: 6].`;
         }
         nInput.addEventListener('input', updateSecretary);
         updateSecretary();
